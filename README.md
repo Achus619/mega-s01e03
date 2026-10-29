@@ -2,6 +2,16 @@
 
 Review of the supplied support KB export and source ticket #4471 for the MEGA.dev course.
 
+## Visual walkthrough of our work
+
+[Download the self-contained visual report](https://github.com/Achus619/mega-s01e03/raw/refs/heads/main/rendered/walkthrough/index.html)
+and open the downloaded HTML file in your browser. This is the explanation written for
+Achus619 about what we did, why, and how the components work, separate from the fictional
+support-desk review. It includes diagrams, actual computed components, expandable examples,
+and links to the source. No server or installation is needed to read it.
+
+Source: [walkthrough `.svx`](support-kb/src/routes/walkthrough/+page.svx).
+
 ## Findings
 
 | Cause | Distinct reports | Tracking |

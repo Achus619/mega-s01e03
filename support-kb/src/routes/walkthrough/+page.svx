@@ -1,0 +1,370 @@
+---
+layout: walkthrough
+title: What we actually did
+owner: Achus619
+reviewed: 2026-10-29
+---
+
+<script>
+  import WalkthroughEvidence from '#lib/kb/WalkthroughEvidence.svelte';
+  import QueueTimeline from '#lib/kb/QueueTimeline.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+</script>
+
+<div class="hero" id="top">
+  <p class="eyebrow">A visual account of our session</p>
+  <h1>What we<br />actually did.</h1>
+  <p class="lede">You gave me a documentation export. We turned its contradictory claims into two GitHub issues and a rendered review. This page explains the work, the components, and my choices without asking you to follow the fictional story.</p>
+  <p class="meta-line">MEGA S01E03 / OpenCode + Achus619 / 29 October 2026<br />The course accepted the result. The implementation still has limits, documented below.</p>
+</div>
+
+<div class="callout">
+  <p><strong>Most of the original interface already existed in the ZIP.</strong> I reused its classifier, evidence table, timeline chart, duplicate-report explorer, layout, and stamp logic. I wrote the review, an issue-links table, the rendering setup, tests, and supporting documentation. The visual treatment of this walkthrough is new.</p>
+</div>
+
+<section id="assignment">
+  <p class="eyebrow">01 / The assignment</p>
+  <h2>Read the evidence. Publish issues. Explain the result.</h2>
+  <p>The challenge gave us a knowledge-base export containing incident #4471. Its prose said 412 complaints were one problem. Its executable components divided them into different causes. We had to identify those causes and publish evidence that another person could inspect.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="tag">Required deliverables</span>
+      <h3>What the course wanted</h3>
+      <ol>
+        <li>One public GitHub issue per distinct problem, each with its report count.</li>
+        <li>A signed page added to the KB.</li>
+        <li>Both its <code>.svx</code> source and the page as the desk would see it.</li>
+        <li>The repo submitted to the course, followed by appropriate ticket closure after the desk update.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <span class="tag written">Your part</span>
+      <h3>Access and decisions</h3>
+      <p>You supplied the ZIP, signed in to GitHub, approved local installations and public changes, and brought back the later engineering update from the course page.</p>
+      <p>I could run terminal commands and read local files. I could not operate your signed-in course browser.</p>
+    </div>
+  </div>
+  <p>We analyzed a supplied documentation-and-data project. We never built the fictional booking product or patched its actual date parser.</p>
+</section>
+
+<section id="scenario">
+  <p class="eyebrow">02 / The fictional setup</p>
+  <h2>The story, reduced to a data model.</h2>
+  <div class="flow" aria-label="Customer reports go to a support desk, are merged into ticket 4471, and are explained in a knowledge base">
+    <div class="flow-node"><strong>Customers</strong>Use a booking/calendar product.</div>
+    <span class="flow-arrow" aria-hidden="true">→</span>
+    <div class="flow-node"><strong>Reports</strong>Complaints arrive through app, email, or form.</div>
+    <span class="flow-arrow" aria-hidden="true">→</span>
+    <div class="flow-node"><strong>Ticket #4471</strong>Support bundles complaints together.</div>
+    <span class="flow-arrow" aria-hidden="true">→</span>
+    <div class="flow-node"><strong>Knowledge base</strong>Pages describe the incident and triage rules.</div>
+  </div>
+  <p>A <strong>tenant</strong> is a customer organization. Each tenant has a locale and a booking-form version. Those settings help classify its reports. A <strong>report</strong> is one complaint; a <strong>ticket</strong> is a tracked problem that can collect many reports.</p>
+  <p>The mistake in the scenario was merging reports by their subject lines. “Wrong date” can describe several failures. Our GitHub issues were the exercise's separate tracking tickets; they did not modify a live support system.</p>
+</section>
+
+<section id="evidence">
+  <p class="eyebrow">03 / Where the numbers came from</p>
+  <h2>The exercise supplied the classification model.</h2>
+  <p>The ZIP contained <code>reports-4471.json</code>, tenant configuration files, and <code>causes.ts</code>. That TypeScript file already defined the two categories, <code>parser</code> and <code>hint</code>, and the rules for assigning reports to them. I used those rules; I did not independently discover the defects in a running product.</p>
+
+  <div class="artifact">
+    <div class="artifact-label">Computed from the original export</div>
+    <WalkthroughEvidence view="counts" />
+  </div>
+
+  <p>The export had overlapping pages, so 15 rows repeated existing report IDs. Counting rows would have inflated the total. After deduplication, all 412 reports were assigned to the two groups.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="tag">Parser / 379 reports</span>
+      <h3>The software reads the wrong format</h3>
+      <p>A person intends 7 April and enters <code>07/04/2026</code>. A month-first parser reads that as 4 July.</p>
+      <p>The supplied model assigns the applicable app/email reports and booking-v2 form reports to this group.</p>
+    </div>
+    <div class="card">
+      <span class="tag changed">Hint / 33 reports</span>
+      <h3>The form teaches the wrong format</h3>
+      <p>The booking-v3 hint says <code>MM/DD/YYYY</code>. A person follows it and enters 7 April as <code>04/07/2026</code>, but the day-first form reads 4 July.</p>
+      <p>Fixing the shared parser alone would not correct this mismatch between instructions and interpretation.</p>
+    </div>
+  </div>
+
+  <details>
+    <summary>Why didn't you just count the report tags?</summary>
+    <p>The <code>intakeTag</code> field is a preliminary guess. The supplied code explicitly says to use the tenant's locale, form version, and channel instead. Of the parser reports, 23 had a hint tag; of the hint reports, 15 had a parser tag. A browser's locale is also not necessarily the customer's configured locale.</p>
+    <p>The classifier checks locale date order using <code>Intl.DateTimeFormat(...).formatToParts(...)</code>. It does not rely on my own hand-written list of European locales.</p>
+  </details>
+  <details>
+    <summary>What about the five odd reports?</summary>
+    <p>Some complaints describe one-day shifts, a June-only problem, a discrepancy between cities, or unusual timing. The export explicitly flagged five such observations. I preserved them as unresolved evidence limits within the classifier's parser group.</p>
+    <p>I did not call them a confirmed third timezone bug. We lacked the original inputs, stored dates, timestamps, and timezone configuration needed to establish that.</p>
+  </details>
+</section>
+
+<section id="ownership">
+  <p class="eyebrow">04 / Reused versus written</p>
+  <h2>What came in the ZIP, and what I added.</h2>
+  <div class="grid-2">
+    <div class="card">
+      <span class="tag">Already supplied</span>
+      <h3>The KB's original machinery</h3>
+      <ul>
+        <li>Report data, tenant directory, and cause classifier.</li>
+        <li><code>CauseTable</code>: evidence and group counts.</li>
+        <li><code>QueueTimeline</code>: weekly received/merged bars.</li>
+        <li><code>DedupeExplorer</code>: interactive comparison examples.</li>
+        <li><code>RenderStamp</code>: a signature-derived reference.</li>
+        <li><code>KbIndex</code>, the runbook layout, and original CSS.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="tag written">Written during our session</span>
+      <h3>The review and delivery setup</h3>
+      <ul>
+        <li>The signed review and a new decision record.</li>
+        <li>Corrections to incident and triage guidance.</li>
+        <li><code>IssueLinks</code>: computed counts with issue links and outcomes.</li>
+        <li>Analysis and rendering scripts, Vite configuration, and tests.</li>
+        <li>GitHub issue drafts and repository documentation.</li>
+        <li>This separate walkthrough, layout, and visual examples.</li>
+      </ul>
+    </div>
+  </div>
+  <p>I preserved the original report data, tenant data, classifier, and accepted decision 0001. I compared those files against the ZIP to check that they stayed unchanged.</p>
+  <p>The original KB appearance was inherited. This walkthrough has its own reading layout, navigation, explanatory cards, and split bar so you can study the implementation without confusing it with the incident page.</p>
+</section>
+
+<section id="components">
+  <p class="eyebrow">05 / Reading the components</p>
+  <h2>What those tables, bars, and controls are doing.</h2>
+
+  <h3>The original evidence table</h3>
+  <p>The component below is <code>CauseTable.svelte</code>, imported directly from the export. It deduplicates the reports, filters on #4471, looks up tenant settings, and computes groups. The table's values come from that execution.</p>
+  <div class="artifact">
+    <div class="artifact-label">Original component, rendered here with ticket=4471</div>
+    <CauseTable ticket={4471} />
+  </div>
+  <p>The highlighted row means “this cause does not belong under the ticket's majority cause.” It is not a severity rating. The tags column shows what intake guessed, so you can see where those guesses disagree with the computed grouping.</p>
+  <div class="callout warning">
+    <p>The “no ticket of its own” label describes the historical source data. We later created issue #2, but did not rewrite the export. The signed review explains that difference and adds a separate table linking the new issues. A clearer historical label would improve this presentation.</p>
+  </div>
+
+  <h3>The original timeline chart</h3>
+  <p>Each week has two bars: when complaints arrived, and when support merged them into #4471. These dates are separate fields on each report.</p>
+  <div class="artifact">
+    <div class="artifact-label">Original QueueTimeline component, unchanged</div>
+    <QueueTimeline ticket={4471} />
+    <div class="legend">
+      <span><span class="swatch orange"></span>Orange: reports received that week</span>
+      <span><span class="swatch green"></span>Green: reports merged that week</span>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card"><h3>What the pattern tells us</h3><p>Complaints arrived from April onward. Merges started in July. A large merge spike can reflect support processing a backlog, so it does not establish that failures suddenly increased in July.</p></div>
+    <div class="card"><h3>What the bars do not tell us</h3><p>They do not show fixes, severity, deployments, or successful bookings. Their heights are scaled to the largest weekly count. There is no numeric vertical axis or tooltip, so precise weekly values are hard to read.</p></div>
+  </div>
+  <p class="caption">The new split bar earlier in this walkthrough answers a different question: how the 412 reports divide between causes. The original weekly bars answer when reports arrived and were merged.</p>
+
+  <h3>The duplicate-report explorer</h3>
+  <p>The original <code>DedupeExplorer.svelte</code> has two sets of tenant/channel selectors and subject inputs. It calculates a cause for each side, then compares the causes. The subject text is intentionally absent from the cause calculation.</p>
+  <p>Its lesson is concrete: the same subject can describe different causes, and different subjects can describe the same cause. Expand the original example cases below to see the actual classifier's answers.</p>
+  <WalkthroughEvidence view="cases" />
+
+  <details>
+    <summary>Why did the saved explorer's dropdowns not update the verdict?</summary>
+    <p>The original component needs browser-side Svelte code to respond to input. Our first deliverable was server-rendered HTML without hydration. The browser can change the dropdown's visible selection, but there is no JavaScript recalculating its verdict.</p>
+    <p>The incident review itself contains tables and a chart, so it did not require that interaction. The linked explorer pages are frozen snapshots. This walkthrough uses native HTML disclosure controls instead: expanding the cases works offline, and their computed answers remain fixed until rendering runs again.</p>
+  </details>
+
+  <h3>The stamp, index, and review-age warnings</h3>
+  <p><code>RenderStamp</code> derives a short desk reference from the signature. The course checks that we used its issued proof; the component itself only calculates and prints a reference. It does not contact the course or verify authenticity.</p>
+  <p><code>KbIndex</code> discovers pages from their files and reads their frontmatter. Adding pages under the existing KB folders makes them discoverable without a separate manual index.</p>
+  <p>The original runbook layout also calculates days since review. After 180 days it displays a stale-document warning. That warning concerns the age of the documentation, not product severity. In saved HTML, the age changes only when the page is regenerated.</p>
+</section>
+
+<section id="format">
+  <p class="eyebrow">06 / How I knew what to write</p>
+  <h2>The existing project provided a contract.</h2>
+  <p>The README and existing pages showed how to compose a KB page. Its instructions put prose in pages, reusable calculations in <code>src/lib</code>, and computed numbers inside components. They also required metadata, a signature, and a final render stamp.</p>
+
+```svx
+---
+layout: runbook
+title: A review page
+owner: Achus619
+status: reviewed
+reviewed: 2026-10-29
+signature: '(course-issued proof)'
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+## Evidence
+
+This is ordinary Markdown around a computed component.
+
+<CauseTable ticket={4471} />
+
+<RenderStamp {signature} />
+```
+
+  <p><code>.svx</code> here means mdsvex: Markdown that supports Svelte components. I knew it was Svelte because the export imported <code>.svelte</code> files and used Svelte syntax. I used my framework knowledge to supply the missing build setup; the project itself determined the framework choice.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Syntax</th><th>What it does here</th></tr></thead>
+      <tbody>
+        <tr><td><code>frontmatter</code></td><td>Metadata at the start of a page: title, owner, date, layout, and required proof.</td></tr>
+        <tr><td><code>import</code></td><td>Makes an existing component available to the page.</td></tr>
+        <tr><td><code>$props()</code></td><td>Reads a component's inputs, such as the ticket number.</td></tr>
+        <tr><td><code>$derived(...)</code></td><td>Calculates a value from its inputs. In a live Svelte app it can update reactively.</td></tr>
+        <tr><td><code>$state(...)</code></td><td>Stores changeable UI state in the original interactive explorer.</td></tr>
+        <tr><td>Svelte each block</td><td>Renders one row or bar pair per item.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Why I wrote IssueLinks that way</h3>
+  <p>The existing evidence table did not link to our newly created GitHub issues. I added <code>IssueLinks.svelte</code> using the same deduplication, tenant lookup, and grouping functions. This avoids maintaining a second classifier for one table.</p>
+  <p>Its counts are computed. Its issue numbers and engineering outcomes are recorded values. They do not automatically synchronize with GitHub or the course page.</p>
+
+  <h3>Why the original report inherited its appearance</h3>
+  <p>The supplied <code>runbook.svelte</code> controlled the document width, fonts, colors, table styles, header, status, and footer. Reusing it made the new page fit the existing KB. Component styles added the highlighted evidence row, chart colors, and stamp formatting.</p>
+  <p>This walkthrough uses a new layout because its audience and purpose differ: you are reviewing how the work happened, not reading the fictional desk's incident notes.</p>
+</section>
+
+<section id="rendering">
+  <p class="eyebrow">07 / Source to browser</p>
+  <h2>We ran the components to produce a document.</h2>
+  <div class="flow" aria-label="Source files are compiled with mdsvex, resolved with Vite, rendered by Svelte, and saved as HTML">
+    <div class="flow-node"><strong>Source</strong><code>.svx</code>, <code>.svelte</code>, JSON</div>
+    <span class="flow-arrow" aria-hidden="true">→</span>
+    <div class="flow-node"><strong>mdsvex + Vite</strong>Compile pages and resolve imports.</div>
+    <span class="flow-arrow" aria-hidden="true">→</span>
+    <div class="flow-node"><strong>Svelte renderer</strong>Execute components and calculations.</div>
+    <span class="flow-arrow" aria-hidden="true">→</span>
+    <div class="flow-node"><strong>Saved HTML</strong>Tables, SVG, CSS, text, and links.</div>
+  </div>
+  <p>The ZIP lacked a complete app scaffold. I installed local rendering packages and configured <code>#lib</code>, TypeScript preprocessing, the mdsvex layouts, and component CSS. Vite also evaluates the project's file-discovery imports, which the tenant directory and page index rely on.</p>
+  <p>The rendering script writes full HTML files and adjusts internal KB links for offline use. CSS is included in each file. It does not need a web server or an internet connection to display; source-code links lead back to GitHub.</p>
+  <div class="callout"><p>The timeline and evidence table on this walkthrough are the actual original components running again. I did not draw a screenshot of them or manually copy their output. The new count graphic also reads the original export and classifier.</p></div>
+
+  <details>
+    <summary>What is the difference between rendering and hydration?</summary>
+    <p><strong>Rendering</strong> runs a component to produce HTML. We did that in Node, then saved the output. The browser displays the resulting tables, shapes, and text.</p>
+    <p><strong>Hydration</strong> would load JavaScript in the browser and connect those elements to Svelte's state and event handlers. We did not add hydration. Native links and disclosure controls work because the browser already implements them.</p>
+  </details>
+  <details>
+    <summary>How do I regenerate these pages?</summary>
+
+```sh
+npm ci
+npm run render
+npm test
+```
+
+    <p>These commands run from the repository root. Node 22.19 or newer is required. You do not need any of them just to read the downloaded HTML.</p>
+    <p>The initial latest-Vite install hit a missing dependency download. I used Vite 6 and its compatible Svelte plugin. The installed rendering-tool chain reported three low-severity advisories; the generated document ships none of that JavaScript runtime.</p>
+  </details>
+</section>
+
+<section id="changes">
+  <p class="eyebrow">08 / What changed in the repo</p>
+  <h2>The source changes had separate purposes.</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Artifact</th><th>Change</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>GitHub issues #1 and #2</td><td>Created and later closed with distinct reasons.</td><td>Track different problems with separate counts and outcomes.</td></tr>
+        <tr><td>Signed incident review</td><td>Added a new <code>.svx</code> page.</td><td>Explain the evidence, exceptions, limits, and later update.</td></tr>
+        <tr><td>Original incident page</td><td>Corrected the one-cause claim and recorded closure.</td><td>Keep the entry page consistent with the review.</td></tr>
+        <tr><td>Triage page</td><td>Replaced automatic subject-based merging.</td><td>A shared subject is insufficient evidence of a shared cause.</td></tr>
+        <tr><td>Decision 0002</td><td>Added a superseding decision; left 0001 unchanged.</td><td>The README forbids rewriting accepted decision history.</td></tr>
+        <tr><td>IssueLinks component</td><td>Added computed counts, tracking links, and recorded outcomes.</td><td>Connect historical evidence to our new issues.</td></tr>
+        <tr><td>Analysis, renderer, tests</td><td>Added scripts and configuration.</td><td>Make the calculations and HTML reproducible.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Updating surrounding triage guidance and adding the replacement decision were my choices for consistency. The core assignment required issues and a signed review page; it did not explicitly require every surrounding edit.</p>
+</section>
+
+<section id="timeline">
+  <p class="eyebrow">09 / How the session unfolded</p>
+  <h2>The work included a few avoidable detours.</h2>
+  <ol class="event-list">
+    <li><strong>We established access.</strong>You approved GitHub CLI installation and signed in. I located your downloaded export and read its data and source.</li>
+    <li><strong>I counted before rendering.</strong>I ran the KB classifier and got 379 + 33. I initially published the source review without its HTML, so the required visual artifact was missing.</li>
+    <li><strong>You supplied the complete deliverable wording.</strong>I added the real Svelte/mdsvex renderer, generated the pages, and checked the HTML programmatically.</li>
+    <li><strong>The first submission used the wrong field.</strong>The course refused the format. I corrected the answer to its required <code>repo</code> field, and the tickets passed.</li>
+    <li><strong>You refreshed the course page.</strong>The export was dated 4 October. You supplied the later engineering update: #4471 closed 5 October; parser fixed; hint won't fix because booking-v3 was retired.</li>
+    <li><strong>I recorded the separate outcomes.</strong>I closed the parser issue as completed and the hint issue as not planned, updated the KB, and regenerated the HTML.</li>
+    <li><strong>The signature was wrong.</strong>I had used an author label. The course required its own issued proof. I retrieved it, replaced the signature, and regenerated the desk reference.</li>
+    <li><strong>The course accepted the final repo.</strong>We saved the debrief. This visual walkthrough came afterward at your request.</li>
+  </ol>
+  <div class="grid-2">
+    <div class="card"><span class="tag">Parser</span><h3>Closed as completed</h3><p>The course's engineering update reported a fix: <code>fix(dates): parse dd/mm for eu locales</code>.</p></div>
+    <div class="card"><span class="tag changed">Hint</span><h3>Closed as not planned</h3><p>The course reported that booking-v3 was retired. The hint was never corrected, so calling it fixed would misrepresent the outcome.</p></div>
+  </div>
+  <p>I should have obtained the full brief and proof requirements earlier, rendered before describing the work as nearly finished, and explained the reused components more clearly. I also started the local course log late; it includes reconstructed entries rather than a complete raw record from the first call.</p>
+  <p>The final review preserves historical recommendations for correcting the hint even though its opening records retirement. Labeling those paragraphs more clearly as historical analysis would make the chronology easier to follow.</p>
+</section>
+
+<section id="verification">
+  <p class="eyebrow">10 / Verification and limits</p>
+  <h2>Acceptance and verification cover different things.</h2>
+  <div class="grid-2">
+    <div class="card">
+      <span class="tag">Checked in the original solve</span>
+      <h3>Nine automated tests</h3>
+      <ol>
+        <li>Deduplication and identical overlapping rows.</li>
+        <li>The expected cause counts and tenant coverage.</li>
+        <li>Different causes for different channels.</li>
+        <li>Unknown tenants and browser-locale independence.</li>
+        <li>The five preserved unusual observations.</li>
+        <li>Metadata and signature structure.</li>
+        <li>Resolvable KB imports.</li>
+        <li>Rendered counts, chart, styles, stamp, and outcomes.</li>
+        <li>Working internal snapshot links.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <span class="tag changed">Not established</span>
+      <h3>The limits remain visible</h3>
+      <ul>
+        <li>We did not run the booking product.</li>
+        <li>We did not independently verify engineering's fix or retirement.</li>
+        <li>We did not resolve every unusual report.</li>
+        <li>I did not visually inspect the HTML in an automated browser.</li>
+        <li>The saved original explorer is not hydrated.</li>
+      </ul>
+      <p>The course accepted the deliverables. That does not establish the broader checks above.</p>
+    </div>
+  </div>
+  <p>The later engineering update and its date came from the course page you shared. The counts came from the export and classifier. The report makes that distinction because a source snapshot cannot establish what happened afterward.</p>
+  <p>This walkthrough adds its own checks for rendered sections, evidence, offline links, and the absence of external assets. It uses native HTML navigation and disclosure controls so those features need no client-side framework runtime.</p>
+</section>
+
+<section id="files">
+  <p class="eyebrow">11 / Explore the actual files</p>
+  <h2>Follow the explanation back to the implementation.</h2>
+  <p>These links open the public repository. The report itself works offline; viewing the code on GitHub needs an internet connection. The course-issued proof is not reproduced in this walkthrough.</p>
+  <div class="source-list">
+    <a href="https://github.com/Achus619/mega-s01e03/blob/main/support-kb/src/routes/walkthrough/+page.svx">This walkthrough's source <small>The narrative and component composition in mdsvex.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/blob/main/support-kb/src/lib/layouts/walkthrough.svelte">This walkthrough's layout <small>Navigation, typography, cards, responsive layout, and print styles.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/blob/main/support-kb/src/lib/kb/WalkthroughEvidence.svelte">The new visual examples <small>The split bar and expandable cases, computed from the original data.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/blob/main/support-kb/src/lib/kb/causes.ts">The original classifier <small>Where the cause definitions, deduplication, and grouping actually live.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/blob/main/support-kb/src/lib/kb/QueueTimeline.svelte">The original timeline chart <small>Weekly receipt and merge counts turned into SVG rectangles.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/blob/main/support-kb/src/lib/kb/DedupeExplorer.svelte">The original interactive explorer <small>The Svelte state, selectors, and calculated verdict.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/blob/main/support-kb/src/routes/kb/incidents/4471-review/+page.svx">The accepted incident review <small>A separate document written for the fictional support desk.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/blob/main/vite.config.mjs">Rendering configuration <small>mdsvex layouts, Svelte preprocessing, and the #lib alias.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/blob/main/scripts/render.mjs">The HTML-writing script <small>Loads rendered pages, includes styles, and fixes offline links.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/tree/main/tests">The tests <small>Checks on the data, source, rendered review, and this walkthrough.</small></a>
+    <a href="https://github.com/Achus619/mega-s01e03/issues?q=is%3Aissue">The two GitHub issues <small>Historical counts, evidence, proposed verification, and closure outcomes.</small></a>
+  </div>
+</section>

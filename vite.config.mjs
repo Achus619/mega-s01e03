@@ -14,7 +14,10 @@ export default defineConfig({
       vitePreprocess(),
       mdsvex({
         extensions: ['.svx'],
-        layout: { runbook: local('./support-kb/src/lib/layouts/runbook.svelte') },
+        layout: {
+          runbook: local('./support-kb/src/lib/layouts/runbook.svelte'),
+          walkthrough: local('./support-kb/src/lib/layouts/walkthrough.svelte'),
+        },
       }),
     ],
     compilerOptions: { css: 'injected' },
