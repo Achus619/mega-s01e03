@@ -4,7 +4,7 @@ title: '0002 · Merge reports only when the cause matches'
 owner: Achus619
 status: accepted
 reviewed: 2026-10-29
-signature: 'Achus619 / OpenCode / S01E03'
+signature: 'v1.eyJzdWIiOiI2Mjk2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyODQ5MDQsImV4cCI6MTc5MzM3MTMwNH0.ju74lwVYByQEEtHREEKw_cq5G91sACgzcuMdmSP3Sg8'
 ---
 
 <script>

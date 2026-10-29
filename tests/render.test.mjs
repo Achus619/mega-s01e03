@@ -7,6 +7,8 @@ import { groups } from '../scripts/analyze.mjs';
 const root = new URL('../rendered/', import.meta.url);
 const review = new URL('kb/incidents/4471-review/index.html', root);
 const html = readFileSync(review, 'utf8');
+const source = readFileSync(new URL('../support-kb/src/routes/kb/incidents/4471-review/+page.svx', import.meta.url), 'utf8');
+const signature = source.match(/^signature: '([^']+)'$/m)[1];
 
 test('desk-facing HTML contains the actual computed results, styles and chart', () => {
   assert.match(html, /^<!doctype html>/);
@@ -14,7 +16,7 @@ test('desk-facing HTML contains the actual computed results, styles and chart', 
   assert.match(html, /<style/);
   assert.match(html, /<svg/);
   assert.match(html, /<rect/);
-  assert.ok(html.includes(deskRef('Achus619 / OpenCode / S01E03')));
+  assert.ok(html.includes(deskRef(signature)));
   for (const g of groups) {
     assert.ok(html.includes(`>${g.reports.length}</td>`));
   }

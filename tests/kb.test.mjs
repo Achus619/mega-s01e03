@@ -14,7 +14,8 @@ test('new pages have required metadata, explicit authorship and render stamps', 
       assert.match(frontmatter, new RegExp(`^${key}: .+`, 'm'));
     }
     assert.match(body, /<RenderStamp \{signature\} \/>/);
-    assert.match(frontmatter, /Achus619 \/ OpenCode \/ S01E03/);
+    assert.match(frontmatter, /^owner: Achus619$/m);
+    assert.match(frontmatter, /^signature: 'v1\.[^']+'$/m);
   }
   assert.match(deskRef('Achus619 / OpenCode / S01E03'), /^DR-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/);
 });

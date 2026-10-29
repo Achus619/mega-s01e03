@@ -30,8 +30,9 @@ group with explicit follow-up; neither the reports nor the model prove a third c
 - [Decision 0002](support-kb/src/routes/kb/decisions/0002-dedupe-by-cause/+page.svx) supersedes subject-only merging without altering accepted decision 0001.
 
 The original data and classifier remain unchanged. Edits are local to this exported KB;
-publishing this repository does not update the live support desk. Review signature identifies
-OpenCode working for Achus619, not an independent live product verification.
+publishing this repository does not update the live support desk. The review credits OpenCode
+working for Achus619; its signature is the course-issued page proof, not a claim of independent
+live product verification.
 
 ## Reproduce the analysis
 
