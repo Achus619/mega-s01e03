@@ -14,6 +14,21 @@ signature: 'Achus619 / OpenCode / S01E03'
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
+## Engineering outcome · 5 October 2026
+
+The course's engineering update marks source ticket #4471 closed on 5 October:
+
+- **Parser: fixed.** `fix(dates): parse dd/mm for eu locales`. Tracking issue #1 is closed
+  as completed on the strength of that engineering update.
+- **Hint: won't fix.** Booking-v3 was retired. Tracking issue #2 is closed as not planned;
+  the hint was not corrected, and must not be described as fixed.
+
+The student supplied this update from the signed-in course page during the review on
+29 October. It is later evidence than the 4 October export, not a result of our own product
+tests. The report counts and charts below remain the historical snapshot. The five unusual
+observations are preserved for follow-up if they recur; we have no evidence independently
+verifying their resolution. A later status change must not rewrite the original reports.
+
 ## Finding
 
 The export dated 4 October does not support the old claim of one issue with one queued fix.
@@ -64,11 +79,13 @@ happened after 4 October or identify a fix deployment.
 
 ## Desk action
 
-Use [the revised triage rule](/kb/triage/dedupe) and
+Both tracking tickets now have recorded engineering dispositions: fixed for the parser,
+not planned for the retired form hint. Use [the revised triage rule](/kb/triage/dedupe) and
 [decision 0002](/kb/decisions/0002-dedupe-by-cause). Read the body, look up the tenant,
 and compare cause and entry path before merging. Unknown tenants and contradictory evidence
-need investigation. Do not resolve either issue until its fix is tested; keep the unusual
-observations visible during verification.
+need investigation. A closed ticket does not mean every cause was fixed. Verify any new
+reports against the stated outcome, and keep the unusual observations visible rather than
+assuming the parser change explains them.
 
 Prepared by OpenCode for Achus619 from the supplied export, reviewed on the date above.
 

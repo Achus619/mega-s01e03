@@ -1,4 +1,12 @@
-## Problem and scope
+## Engineering disposition · source ticket closed 5 October 2026
+
+The course page reports **parser fixed**: `fix(dates): parse dd/mm for eu locales`.
+Closed as completed based on this engineering update, supplied by the student on 29 October.
+We did not independently run the product or verify the unusual observations below. The
+historical report count and original evidence are preserved. The hint issue has a separate
+won't-fix disposition because booking-v3 was retired.
+
+## Historical problem and scope
 
 **379 distinct reports** merged into source ticket #4471 belong to the `parser` group under the exported KB classifier. They span 11 tenants, received from 2026-04-01 through 2026-10-04. These counts describe the 4 October export, not the current live desk.
 

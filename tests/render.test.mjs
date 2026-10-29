@@ -24,6 +24,9 @@ test('desk-facing HTML contains the actual computed results, styles and chart', 
   assert.ok(!html.includes('no desk ref:'));
   assert.ok(html.includes('https://github.com/Achus619/mega-s01e03/issues/1'));
   assert.ok(html.includes('https://github.com/Achus619/mega-s01e03/issues/2'));
+  assert.ok(html.includes('fix(dates): parse dd/mm for eu locales'));
+  assert.ok(html.includes('booking-v3 retired'));
+  assert.ok(html.includes('closed as not planned'));
 });
 
 test('every internal snapshot link resolves to an included HTML file', () => {

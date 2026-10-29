@@ -9,6 +9,14 @@ Review of the supplied support KB export and source ticket #4471 for the MEGA.de
 | Shared parser assumes month-first input | 379 | [Issue #1](https://github.com/Achus619/mega-s01e03/issues/1) |
 | Booking-v3 hint conflicts with tenant date format | 33 | [Issue #2](https://github.com/Achus619/mega-s01e03/issues/2) |
 
+## Later engineering outcome
+
+The student supplied the course page's engineering update: #4471 closed on 5 October 2026.
+The parser was fixed (`fix(dates): parse dd/mm for eu locales`); the hint was marked
+**won't fix because booking-v3 was retired**. Accordingly, issue #1 is closed as completed,
+and issue #2 as not planned. The signed review and rendered page record both outcomes.
+This is course-reported engineering evidence, not independent product verification.
+
 These are snapshot counts from the export dated 2026-10-04. The 427 rows contain 412 unique
 report IDs. Assignment uses the export's executable classifier, tenant locale/form and channel,
 not browser locale, subject or intake tag. Five unusual observations remain in the parser

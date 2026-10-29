@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 · dates parse mm/dd in eu locales'
 owner: support desk
-status: needs-two-fixes
+status: closed
 reviewed: 2026-10-29
 ---
 
@@ -20,8 +20,10 @@ dates, while booking-v3 shows a month-first hint to day-first tenants using a lo
 form parser. See the [signed review and separate tracking issues](/kb/incidents/4471-review).
 
 <Callout>
-The historical “known” status did not mean resolved. A parser fix alone does not correct the
-booking-v3 hint. The export contains no evidence that either fix has shipped.
+Engineering closed #4471 on 5 October: the parser was fixed by
+`fix(dates): parse dd/mm for eu locales`; the hint was marked “won't fix” because booking-v3
+was retired. This later update comes from the course page, not the 4 October export.
+See the signed review for the source, outcomes and remaining evidence limits.
 </Callout>
 
 ## What was merged

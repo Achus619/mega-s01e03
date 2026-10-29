@@ -4,14 +4,14 @@
   import { tenantOf } from '#lib/kb/locales';
 
   const tickets = {
-    parser: { number: 1, title: 'Shared parser assumes month-first dates' },
-    hint: { number: 2, title: 'Booking-v3 date hint conflicts with tenant format' },
+    parser: { number: 1, title: 'Shared parser assumes month-first dates', outcome: 'fixed · closed as completed' },
+    hint: { number: 2, title: 'Booking-v3 date hint conflicts with tenant format', outcome: "won't fix · booking-v3 retired · closed as not planned" },
   };
   const groups = $derived(groupByCause(uniqueById(reports as Report[]).filter((r) => r.mergedInto === 4471), tenantOf));
 </script>
 
 <table>
-  <thead><tr><th>problem</th><th>reports</th><th>tracking issue</th></tr></thead>
+  <thead><tr><th>problem</th><th>reports</th><th>tracking issue</th><th>engineering outcome · 5 October</th></tr></thead>
   <tbody>
     {#each groups as group (group.cause)}
       <tr>
@@ -24,6 +24,7 @@
             Needs investigation; do not merge automatically.
           {/if}
         </td>
+        <td>{group.cause === 'unplaced' ? 'Needs investigation' : tickets[group.cause].outcome}</td>
       </tr>
     {/each}
   </tbody>

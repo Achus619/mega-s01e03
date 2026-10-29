@@ -1,4 +1,11 @@
-## Problem and scope
+## Engineering disposition · source ticket closed 5 October 2026
+
+The course page reports **hint won't fix: booking-v3 form retired**.
+Closed as not planned based on this engineering update, supplied by the student on 29 October.
+The hint was not corrected; it must not be described as fixed. The historical report count
+and original evidence are preserved. The parser issue has a separate fixed disposition.
+
+## Historical problem and scope
 
 **33 distinct reports** merged into source ticket #4471 belong to the `hint` group under the exported KB classifier. They span alder.physio (`de-DE`), copper.studio (`es-ES`) and pale.harbour (`pt-PT`), received from 2026-04-17 through 2026-09-22. All three use booking-v3. These counts describe the 4 October export, not the current live desk.
 
