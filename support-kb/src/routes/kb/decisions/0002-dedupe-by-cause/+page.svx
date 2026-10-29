@@ -1,0 +1,44 @@
+---
+layout: runbook
+title: '0002 · Merge reports only when the cause matches'
+owner: Achus619
+status: accepted
+reviewed: 2026-10-29
+signature: 'Achus619 / OpenCode / S01E03'
+---
+
+<script>
+  import DedupeExplorer from '#lib/kb/DedupeExplorer.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+## Context
+
+The review of #4471 found separate parser and booking-form hint failures in one ticket.
+The same subject can describe different causes; different subjects can describe the same
+cause. Intake tags can disagree with the tenant directory and channel.
+
+## Decision
+
+This record supersedes [decision 0001](/kb/decisions/0001-dedupe-by-subject) for this
+review's triage guidance. The accepted historical record remains unchanged. This exported
+KB does not itself deploy any change to the live support desk.
+
+Read the report body and identify the affected product, tenant, tenant locale, booking form
+and entry path. For these date reports, use `causeOf` from `src/lib/kb/causes.ts` with the
+tenant directory, not the browser locale or guessed tag. Merge only when the failure cause
+matches. Treat subject matching as a way to find candidates, never as proof.
+
+Do not merge unknown or contradictory reports automatically. Request missing evidence and
+keep an explicit investigation record. The date classifier covers this incident; it is not
+a classifier for every product the desk supports.
+
+## Consequences
+
+The desk must read more before merging. Engineering gets separate problems with distinct
+report counts and fixes. Export overlaps must be deduplicated by report ID before counting.
+Any later change to this decision needs a new record rather than an edit to accepted history.
+
+<DedupeExplorer />
+
+<RenderStamp {signature} />

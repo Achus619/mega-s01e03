@@ -1,0 +1,9 @@
+{
+  "name": "mega-s01e03",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "analyze": "node --experimental-strip-types scripts/analyze.mjs",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs"
+  }
+}

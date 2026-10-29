@@ -1,0 +1,75 @@
+---
+layout: runbook
+title: '#4471 review · two causes under one ticket'
+owner: Achus619
+status: reviewed
+reviewed: 2026-10-29
+signature: 'Achus619 / OpenCode / S01E03'
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import IssueLinks from '#lib/kb/IssueLinks.svelte';
+  import QueueTimeline from '#lib/kb/QueueTimeline.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+## Finding
+
+The export dated 4 October does not support the old claim of one issue with one queued fix.
+The groups below are computed from distinct report IDs, tenant locale, booking form and
+intake channel. Browser locale and intake tags are not authoritative. Counts describe this
+export, not today's live queue, and are counts of reports, not unique people or bookings.
+
+<IssueLinks />
+
+## Separate failures
+
+The shared parser reads dates month first even when the tenant writes day first. A date such
+as 7 April can become 4 July. App and email reports, and booking-v2 form reports, fall into
+this group under the exported classifier. The parser fix must respect the tenant's format;
+changing the hint alone cannot fix these paths.
+
+Booking-v3 prints `MM/DD/YYYY` below its date field while its form reads dates in the
+day-first tenant's format. People following that hint enter a date that is then interpreted
+the other way around. Correct the hint to match the form's actual parsing, with locale-aware
+examples and validation. These form reports need their own ticket and acceptance tests.
+
+These are the causes assigned by the KB's executable model. We have not reproduced either
+failure against a running product, and the export contains no product implementation.
+
+## Evidence and exceptions
+
+<CauseTable ticket={4471} />
+
+The exported `CauseTable` still calls the smaller group “no ticket of its own”: that describes
+the source desk's state. The tracking table above links the issues filed during this review.
+Nothing here changes `mergedInto` in the historical source data.
+
+The desk flagged R-41202, R-41209, R-41236, R-41344 and R-41620 as observations that read
+as a one-day move. They remain in the parser group under the tenant-based model, not in an
+invented timezone category. Their bodies include a June-only shift, a cross-city discrepancy
+and an invite said to arrive before booking. Preserve these observations and obtain actual
+timestamps, timezone settings, original inputs and stored values before claiming the parser
+fix explains them. In particular, R-41620 shows that reports continued near the export date.
+
+## What the queue shows
+
+<QueueTimeline ticket={4471} />
+
+Reports arrived from April onward, but merges began in July. A merge spike is desk activity,
+not proof that the failures began that week. Reports continued after the July consolidation:
+“known” did not mean resolved. The chart is bounded by the export; it cannot establish what
+happened after 4 October or identify a fix deployment.
+
+## Desk action
+
+Use [the revised triage rule](/kb/triage/dedupe) and
+[decision 0002](/kb/decisions/0002-dedupe-by-cause). Read the body, look up the tenant,
+and compare cause and entry path before merging. Unknown tenants and contradictory evidence
+need investigation. Do not resolve either issue until its fix is tested; keep the unusual
+observations visible during verification.
+
+Prepared by OpenCode for Achus619 from the supplied export, reviewed on the date above.
+
+<RenderStamp {signature} />

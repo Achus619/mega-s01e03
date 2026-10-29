@@ -1,0 +1,41 @@
+---
+layout: runbook
+title: 'Triage: duplicate reports'
+owner: support desk
+status: reviewed
+reviewed: 2026-10-29
+---
+
+<script>
+  import DedupeExplorer from '#lib/kb/DedupeExplorer.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+</script>
+
+A busy morning brings hundreds of reports about the same thing. We keep one ticket per issue
+and merge every duplicate into it, so engineering sees one thread with a count.
+
+## The rule
+
+A report is a duplicate when the **failure cause matches**, not merely its subject
+([decision 0002](/kb/decisions/0002-dedupe-by-cause), superseding decision 0001):
+
+1. Read the body and identify the affected product, tenant and entry path.
+2. Look up the tenant's locale and booking form. For #4471, use the exported cause classifier.
+3. Find an open ticket for that cause; subject matches are candidates only.
+4. Merge only when the cause matches. Otherwise open a separate issue or investigate missing evidence.
+5. Count distinct report IDs, not rows in overlapping export pages.
+
+<Callout>
+The same tenant and subject can cover both a parser failure and a form-hint failure.
+Browser locale and intake tags are guesses, not evidence of the tenant's actual configuration.
+</Callout>
+
+## Try it
+
+<DedupeExplorer />
+
+## When you are unsure
+
+Keep the report separate while you investigate. Unknown tenants and bodies inconsistent with
+the assigned cause need follow-up, not an automatic merge. See the
+[#4471 review](/kb/incidents/4471-review) for the evidence and unusual date-shift observations.

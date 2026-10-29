@@ -1,0 +1,39 @@
+---
+layout: runbook
+title: '#4471 · dates parse mm/dd in eu locales'
+owner: support desk
+status: needs-two-fixes
+reviewed: 2026-10-29
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import QueueTimeline from '#lib/kb/QueueTimeline.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+</script>
+
+Since April, people have told us their bookings land on the wrong day. This page describes
+the export dated 4 October, not today's live queue.
+
+**Merged as one issue, but two causes are present.** The shared parser assumes month-first
+dates, while booking-v3 shows a month-first hint to day-first tenants using a locale-based
+form parser. See the [signed review and separate tracking issues](/kb/incidents/4471-review).
+
+<Callout>
+The historical “known” status did not mean resolved. A parser fix alone does not correct the
+booking-v3 hint. The export contains no evidence that either fix has shipped.
+</Callout>
+
+## What was merged
+
+<CauseTable ticket={4471} />
+
+## Since April
+
+<QueueTimeline ticket={4471} />
+
+## Lessons
+
+- Group by cause using the tenant's configuration and channel, not by subject or intake tag.
+- Count distinct report IDs and preserve observations the classifier does not explain.
+- Compare receipt dates with merge dates before interpreting a queue spike.
