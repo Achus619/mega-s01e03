@@ -39,9 +39,30 @@ complete report ID lists, intake disagreements, date ranges and monthly received
 The tests cover export overlap, group totals, channel differences, missing tenants and preserved
 one-day observations.
 
-## Rendering limitation
+## Rendered page
 
-The supplied export has Svelte 5 components and `.svx` pages but no package manifest,
-mdsvex configuration or application build scaffold. This repository preserves those conventions;
-the analysis and tests run, but no KB app build or browser render has been verified. Import the
-KB into its host application's existing Svelte/mdsvex setup to render the signed page and desk ref.
+The desk-facing deliverable is [rendered/kb/incidents/4471-review/index.html](rendered/kb/incidents/4471-review/index.html).
+Download the repository and open that file in a browser. It contains the real Svelte/mdsvex
+server-rendered page, including inline component CSS, computed report tables, queue chart and
+signature-derived desk reference. It needs no server or external assets to display.
+
+The other KB pages are included as linked static snapshots. Their interactive controls are
+not hydrated; the review page itself contains only static tables, links and a chart. The HTML
+was checked programmatically, not visually in an automated browser.
+
+To regenerate the HTML from the actual `.svx` and `.svelte` sources:
+
+```sh
+npm ci
+npm run render
+npm test
+```
+
+Vite resolves the original `#lib` imports and tenant `import.meta.glob` calls; mdsvex applies
+the existing runbook layout. No Markdown-only reconstruction or hand-written count replaces
+the components. Regeneration refreshes the review-age labels using the current date.
+
+Rendering dependencies are local development tools. At installation, `npm audit` reported
+three low-severity findings involving `deepmerge` and the Svelte Vite plugin dependency chain,
+with no fix available. The render script does not listen on a network port; the final HTML
+ships no JavaScript or dependency runtime.
